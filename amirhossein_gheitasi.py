@@ -1,81 +1,125 @@
 from tkinter import *
+#import sqlite3
 from tkinter import messagebox
-import json
-
-product_list = []
-count = 0
+from tkinter import ttk
 
 
-def save_product():
-    global count
-    try:
-        # دریافت مقادیر از فرم
-        product_name = name.get()
-        product_quantity = quantity.get()
-        product_price = price.get()
-
-        # اعتبارسنجی
-        if not product_name:
-            messagebox.showerror("خطا", "لطفاً نام محصول را وارد کنید")
-            return
-
-        if product_quantity <= 0:
-            messagebox.showerror("خطا", "مقدار باید بزرگتر از صفر باشد")
-            return
-
-        if product_price <= 0:
-            messagebox.showerror("خطا", "قیمت باید بزرگتر از صفر باشد")
-            return
-
-        # ذخیره محصول
-        product = {
-            'name': product_name,
-            'quantity': product_quantity,
-            'price': product_price
-        }
-
-        product_list.append(product)
-        count += 1
-        count_label.config(text=f"count={count}")
-
-        # نمایش پیام موفقیت
-        messagebox.showinfo("ذخیره شد", "محصول با موفقیت ذخیره شد")
-
-        # چاپ لیست در کنسول
-        print(json.dumps(product_list, indent=2, ensure_ascii=False))
-
-        # پاک کردن فرم
-        name.set("")
-        quantity.set(1)
-        price.set(1)
-
-    except Exception as e:
-        messagebox.showerror("خطا", f"مشکل در ذخیره اطلاعات:\n{str(e)}")
+lesson_list=[]
+# 5
+def reset_form():
+    Code.set(0)
+    Title.set("")
+    Teacher.set("")
+    Class_number.set(0)
+    Unit.set(0)
 
 
-# ایجاد پنجره اصلی
+# 6
+def save_click():
+    lesson={
+        "Code":Code.get(),
+        "Title":Title.get(),
+        "Teacher":Teacher.get(),
+        "Class_Number":Class_number.get(),
+        "Unit":Unit.get()
+    }
+    lesson_list.append(lesson)
+    messagebox.showinfo("save",f"Successfuly saved!\n{lesson}")
+    reset_form()
+    table.insert("",END,values=tuple(lesson.values()))
+
+# HomeWork
+def edit_click():
+    pass
+def remove_click():
+    #file_id = entry_id.get()
+   # if not file_id.insdigit():
+      #  return
+    table_row=table.focus()
+    selected = table.item(table_row)["values"]
+    Code.set(selected[0])
+    Title.set(selected[1])
+    Teacher.set(selected[2])
+    Class_number.set(selected[3])
+    Unit.set(selected[4])
+
+# 7
+def table_select(event):
+    table_row=table.focus()
+    selected=table.item(table_row)["values"]
+    Code.set(selected[0])
+    Title.set(selected[1])
+    Teacher.set(selected[2])
+    Class_number.set(selected[3])
+    Unit.set(selected[4])
+# 0
 window = Tk()
-window.title("سیستم ثبت محصول")
-window.geometry("250x280")
+window.title("Lesson Information")
+window.geometry("700x360")
+window.resizable(False, False)
 
-# متغیرهای فرم
-name = StringVar()
-quantity = IntVar(value=1)
-price = IntVar(value=1)
 
-# ویجت‌های فرم
-Label(window, text='name').place(x=20, y=20)
-Entry(window, textvariable=name).place(x=80, y=20)
+# 1
+# Code
+Code = IntVar()
+Label(window,text="Code:").place(x=20,y=60)
+Entry(window, textvariable=Code).place(x=100,y=60)
+# Title
+Title=StringVar()
+Label(window,text="Title:").place(x=20,y=110)
+Entry(window,textvariable=Title).place(x=100,y=110)
+# Teacher
+Teacher=StringVar()
+Label(window,text="Teacher:").place(x=20,y=160)
+Entry(window,textvariable=Teacher).place(x=100,y=160)
+# Class Number
+Class_number=IntVar()
+Label(window,text="Class number:").place(x=20,y=210)
+Entry(window,textvariable=Class_number).place(x=100,y=210)
+# Unit
+Unit=IntVar()
+Label(window,text="Unit:").place(x=20,y=260)
+Entry(window,textvariable=Unit).place(x=100,y=260)
 
-Label(window, text='quantity').place(x=20, y=60)
-Entry(window, textvariable=quantity).place(x=80, y=60)
 
-Label(window, text='price').place(x=20, y=100)
-Entry(window, textvariable=price).place(x=80, y=100)
+# 2
+# Buttons (Save-Edit-Remove)
+Button(window,text="save",command=save_click,width=7).place(x=20,y=320)
+Button(window,text="edit",command=edit_click,width=7).place(x=95,y=320)
+Button(window,text="remove",command=remove_click,width=7).place(x=170,y=320)
 
-count_label = Label(window, text='count=0')
-count_label.place(x=80, y=150)
+# 3
+# Search Title
+title_search=StringVar()
+Label(window,text="Title search:").place(x=250,y=20)
+Entry(window,textvariable=title_search).place(x=320,y=20)
+# Search Teacher
+teacher_search=StringVar()
+Label(window,text="Teacher search:").place(x=465,y=20)
+Entry(window,textvariable=teacher_search).place(x=555,y=20)
 
-Button(window, text='save', width=10, command=save_product).place(x=80, y=180)
+# 4
+# Table
+table = ttk.Treeview(window, height=13,columns=(1,2,3,4,5),show="headings")
+table.column(1, width=70)
+table.column(2, width=90)
+table.column(3, width=90)
+table.column(4, width=100)
+table.column(5, width=80)
+
+table.heading(1,text="Code")
+table.heading(2,text="Title")
+table.heading(3,text="Teacher")
+table.heading(4,text="Class Number")
+table.heading(5,text="Unit")
+# TreeviewSelect
+
+# bind--> table_select
+table.bind("<<TreeviewSelect>>", table_select)
+table.place(x=250,y=60)
+
+
+
+
 
 window.mainloop()
