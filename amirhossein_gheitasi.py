@@ -89,7 +89,7 @@ Button(window,text="edit",command=edit_click,width=7).place(x=95,y=320)
 Button(window,text="remove",command=remove_click,width=7).place(x=170,y=320)
 
 # 3
-# Search Title
+#Search Title
 title_search=StringVar()
 Label(window,text="Title search:").place(x=250,y=20)
 Entry(window,textvariable=title_search).place(x=320,y=20)
